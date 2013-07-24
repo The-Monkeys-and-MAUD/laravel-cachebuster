@@ -15,7 +15,7 @@ Installation
 To get the latest version of cachebuster simply require it in your composer.json file.
 
 ```JSON
-"Themonkeys/cachebuster": "dev-master"
+"themonkeys/cachebuster": "dev-master"
 ```
 
 You'll then need to run `composer install` to download it and have the autoloader updated.
