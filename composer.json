@@ -1,0 +1,24 @@
+{
+    "name": "themonkeys/cachebuster",
+    "description": "",
+    "homepage": "http://github.com/TheMonkeys/laravel-cachebuster",
+    "authors": [
+        {
+            "name": "themonkeys",
+            "email": "developers@themonkeys.com.au"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "illuminate/support": "4.0.x"
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations"
+        ],
+        "psr-0": {
+            "Themonkeys\\Cachebuster": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
