@@ -19,6 +19,7 @@ class CachebusterServiceProvider extends ServiceProvider {
 	public function boot()
 	{
 		$this->package('themonkeys/cachebuster');
+        $this->app->close('cachebuster.StripSessionCookiesFilter');
 	}
 
 	/**
@@ -31,7 +32,10 @@ class CachebusterServiceProvider extends ServiceProvider {
         $this->app['cachebuster.url'] = $this->app->share(function($app) {
             return new AssetURLGenerator();
         });
-	}
+        $this->app['cachebuster.StripSessionCookiesFilter'] = $this->app->share(function($app) {
+            return new StripSessionCookiesFilter();
+        });
+    }
 
 	/**
 	 * Get the services provided by the provider.

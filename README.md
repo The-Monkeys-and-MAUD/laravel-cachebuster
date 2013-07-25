@@ -68,6 +68,7 @@ Finally, add this to your `app/routes.php` file:
 Route::get('/css/{filename}.css', function($filename) {
     return Bust::css("/css/$filename.css");
 });
+App::make('cachebuster.StripSessionCookiesFilter')->addPattern('|css/|');
 ```
 
 > Note: you might want to adjust the URL pattern if your css files are located elsewhere than `/css/`.
