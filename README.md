@@ -18,7 +18,7 @@ To get the latest version of cachebuster simply require it in your composer.json
 "themonkeys/cachebuster": "dev-master"
 ```
 
-You'll then need to run `composer install` to download it and have the autoloader updated.
+You'll then need to run `composer install` or `composer update` to download it and have the autoloader updated.
 
 Once cachebuster is installed you need to register the service provider with the application.
 Open up `app/config/app.php` and find the `providers` key.
@@ -142,7 +142,7 @@ This uses Laravel's built-in URL generators so the URLs will be generated depend
 Configuration
 -------------
 
-To configure the package, you can use the following command to copy the configuration files to
+To configure the package, you can use the following command to copy the configuration file to
 `app/config/packages/themonkeys/cachebuster`.
 
 ```sh
@@ -154,3 +154,13 @@ Or you can just create a new file in that folder and only override the settings 
 The settings themselves are documented inside `config.php`.
 
 
+Contribute
+----------
+
+In lieu of a formal styleguide, take care to maintain the existing coding style.
+
+License
+-------
+
+MIT License
+(c) [The Monkeys](http://www.themonkeys.com.au/)
