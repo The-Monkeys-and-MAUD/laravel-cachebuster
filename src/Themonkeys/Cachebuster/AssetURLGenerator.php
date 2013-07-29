@@ -47,7 +47,7 @@ class AssetURLGenerator
         $self = $this;
         $calculate = function() use($asset, $self) {
             $path = $self->map_path($asset);
-            if (File::exists($path)) {
+            if (File::exists($path) && File::isFile($path)) {
                 return md5_file($path);
             }
         };
