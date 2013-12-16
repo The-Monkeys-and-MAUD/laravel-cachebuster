@@ -1,6 +1,7 @@
 <?php namespace Themonkeys\Cachebuster;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\App;
 
 class CachebusterServiceProvider extends ServiceProvider {
 
@@ -19,7 +20,10 @@ class CachebusterServiceProvider extends ServiceProvider {
 	public function boot()
 	{
 		$this->package('themonkeys/cachebuster');
-        $this->app->close('cachebuster.StripSessionCookiesFilter');
+        $rc = new \ReflectionClass($this->app);
+        if ($rc->hasMethod('close')) {
+            $this->app->close('cachebuster.StripSessionCookiesFilter');
+        }
 	}
 
 	/**
@@ -33,8 +37,14 @@ class CachebusterServiceProvider extends ServiceProvider {
             return new AssetURLGenerator();
         });
         $this->app['cachebuster.StripSessionCookiesFilter'] = $this->app->share(function($app) {
-            return new StripSessionCookiesFilter();
+            return new StripSessionCookiesFilter($app);
         });
+        $rc = new \ReflectionClass($this->app);
+        if ($rc->hasMethod('middleware')) {
+            $this->app->middleware(function($app) {
+                return new SessionCookiesStripper($app, App::make('cachebuster.StripSessionCookiesFilter'));
+            });
+        }
     }
 
 	/**

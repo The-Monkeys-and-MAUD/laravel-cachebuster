@@ -9,12 +9,19 @@ class StripSessionCookiesFilter {
         $this->patterns []= $pattern;
     }
 
-    public function filter($request, $response = null) {
+    public function matches($request) {
         $url = Request::path();
         foreach ($this->patterns as $pattern) {
             if (preg_match($pattern, $url)) {
-                header_remove('Set-Cookie');
+                return true;
             }
+        }
+        return false;
+    }
+
+    public function filter($request, $response = null) {
+        if ($this->matches($request)) {
+            header_remove('Set-Cookie');
         }
     }
 }
