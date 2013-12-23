@@ -127,7 +127,7 @@ the cachebuster, so they now have hashes in their filenames too. Open the CSS fi
 Sometimes you might want to specify an absolute URL, for example in an OpenGraph meta tag. That's easy:
 
 ```HTML
-<meta property="og:image" content="{{ Bust::url('/img/share-thumbnail.jpg') }}" />
+<meta property="og:image" content="{{ Bust::url('/img/share-thumbnail.jpg', true) }}" />
 ```
 
 might come out as:
