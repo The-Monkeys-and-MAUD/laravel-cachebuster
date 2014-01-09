@@ -50,6 +50,8 @@ class AssetURLGenerator
             $path = $self->map_path($asset);
             if (File::exists($path) && File::isFile($path)) {
                 return md5_file($path);
+            } else {
+                throw new Exception("Asset '$path' not found");
             }
         };
         if ($expiry) {
