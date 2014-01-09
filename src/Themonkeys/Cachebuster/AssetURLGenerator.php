@@ -24,9 +24,12 @@ class AssetURLGenerator
         $url = $this->cachebusted($asset);
 
         $base = Config::get("cachebuster::cdn");
-        if ($base === '' && $absolute) {
+        
+        if ($base === '' && $absolute)
+        {
             $base = URL::to('/');
         }
+        
         return $base . $url;
     }
 
@@ -34,29 +37,37 @@ class AssetURLGenerator
         $key = ltrim($asset, '/');
         $url = $asset;
 
-        $md5 = $this->md5($url);
-        if ($md5) {
+        $hash = $this->hash($url);
+        
+        if ($hash)
+        {
             $parts = pathinfo($url);
             $dirname = ends_with($parts['dirname'], '/') ? $parts['dirname'] : $parts['dirname'] . '/';
-            $url = "{$dirname}{$parts['filename']}-$md5.{$parts['extension']}";
+            $url = "{$dirname}{$parts['filename']}-{$hash}.{$parts['extension']}";
         }
+        
         return $url;
     }
 
-    public function md5($asset) {
+    public function hash($asset) {
         $expiry = Config::get('cachebuster::expiry');
-        $self = $this;
-        $calculate = function() use($asset, $self) {
-            $path = $self->map_path($asset);
-            if (File::exists($path) && File::isFile($path)) {
-                return md5_file($path);
-            }
-        };
-        if ($expiry) {
-            return Cache::remember('url.md5.' . $asset, $expiry, $calculate);
-        } else {
-            return $calculate();
+        
+        if ($expiry)
+        {
+            return Cache::remember('url.hash.' . $asset, $expiry, $this->calculateHash($asset, $path));
         }
+        
+        return $this->calculateHash($asset, $path);
+    }
+    
+    public function calculateHash($asset, $path) {
+        $path = $this->map_path($asset);
+        if ( ! File::exists($path) && ! File::isFile($path))
+        {
+            throw new Exception('Asset does not exist')
+        }
+        
+        return md5_file($path);
     }
 
     /**
@@ -65,13 +76,15 @@ class AssetURLGenerator
      * @param $url
      */
     public function css($url) {
-        if (Session::isStarted() && Session::has('flash.old')) {
+        if (Session::isStarted() && Session::has('flash.old'))
+        {
             Session::reflash(); // in case any flash data would have been lost here
         }
 
         // strip out cachebuster from the url, if necessary
         $url = $this->map_path($url);
-        if (File::exists($url)) {
+        if (File::exists($url))
+        {
             $source = File::get($url);
             $base = realpath(dirname($url));
             $public = realpath('./');
@@ -83,9 +96,11 @@ class AssetURLGenerator
                 $qs = $matches[3];
 
                 // determine the absolute path of the given URL (resolve ../ etc against the path to the css file)
-                if (substr($url, 0, 1) != '/') {
+                if (substr($url, 0, 1) != '/')
+                {
                     $abs = realpath($base . '/' . $url);
-                    if (File::exists($abs) && starts_with($abs, $public)) {
+                    if (File::exists($abs) && starts_with($abs, $public))
+                    {
                         $url = substr($abs, strlen($public));
                     }
                 }
@@ -94,6 +109,7 @@ class AssetURLGenerator
                 if (substr($url, 0, 1) == '/') {
                     $replacement = 'url(' . $matches[1] . $self->url($url) . $matches[3] . ')';
                 }
+                
                 return $replacement;
 
             }, $source);
@@ -106,7 +122,9 @@ class AssetURLGenerator
                 )
             );
 
-        } else {
+        }
+        else
+        {
             App::abort(404, 'Page not found');
         }
     }
@@ -117,21 +135,29 @@ class AssetURLGenerator
 
     public function map_path($url) {
         $url = '/' . preg_replace(';(^/+|#.*$);', '', $this->strip_cachebuster($url));
-        foreach (Config::get('cachebuster::path_maps') as $from => $to) {
-            if (starts_with($url, $from)) {
+        
+        foreach (Config::get('cachebuster::path_maps') as $from => $to)
+        {
+            if (starts_with($url, $from))
+            {
                 $part = substr($url, strlen($from));
-                if (starts_with($part, '/')) {
+                if (starts_with($part, '/'))
+                {
                     $part = substr($part, 1);
                 }
-                if (ends_with($to, '/')) {
+                if (ends_with($to, '/'))
+                {
                     $to = substr($to, 0, strlen($to) - 1);
                 }
                 $url = $to . '/' . $part;
             }
         }
-        if (starts_with($url, '/')) {
+        
+        if (starts_with($url, '/'))
+        {
             $url = substr($url, 1);
         }
+        
         return $url;
     }
 }
