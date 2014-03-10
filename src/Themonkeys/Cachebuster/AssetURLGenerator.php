@@ -61,20 +61,39 @@ class AssetURLGenerator
         }
     }
 
-    public function getExtension($url)
+    /*
+     * Returns the extension of the file given
+     *
+     * @param $file
+     */
+    public function getExtension($file)
     {
-        return pathinfo($url, PATHINFO_EXTENSION);
+        return pathinfo($file, PATHINFO_EXTENSION);
     }
 
-
+    /*
+     * Returns a response with a css mime type in the header.
+     *
+     * @param $url
+     */
     public function css($url) {
         return $this->resource($url, 'text/css');
     }
 
+    /*
+     * Returns a response with the js mime type in the header.
+     *
+     * @param $url
+     */
     public function js($url) {
         return $this->resource($url, 'application/javascript');
     }
 
+    /*
+     * Returns a response with a mime type based on the file type in the url
+     *
+     * @param $url
+     */
     public function img($url) {
         $extension = $this->getExtension($url);
         $type = 'image/';
@@ -104,6 +123,11 @@ class AssetURLGenerator
         return $this->resource($url, $type);
     }
 
+    /*
+     * Returns a response with a mime type based on the file type in the url
+     *
+     * @param $url
+     */
     public function font($url) {
         $extension = $this->getExtension($url);
         $type = 'application/';
