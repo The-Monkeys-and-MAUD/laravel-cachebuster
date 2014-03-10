@@ -61,12 +61,77 @@ class AssetURLGenerator
         }
     }
 
-    /**
-     * Loads the css file at the given URL, replaces all urls within it to cachebusted CDN urls,
-     * and returns the resulting css source code as a Response object suitable for the Laravel router.
-     * @param $url
-     */
+
     public function css($url) {
+        return $this->resource($url, 'text/css');
+    }
+
+    public function js($url) {
+        return $this->resource($url, 'application/javascript');
+    }
+
+    public function img($url) {
+        $extension = getExtension($url);
+        $type = 'image/';
+
+        if($extension == 'gif'   ||
+            $extension == 'jpeg' ||
+            $extension == 'png'  ||
+            $extension == 'bmp'  ||
+            $extension == 'tiff'
+        )
+        {
+            $type .= $extension;
+        }
+        else if($extension == 'ico')
+        {
+            $type .= 'x-icon';
+        }
+        else if($extension == 'jpg')
+        {
+            $type .= 'jpeg';
+        }
+        else if($extension == 'tif')
+        {
+            $type .= 'tiff';
+        }
+
+        return $this->resource($url, $type);
+    }
+
+    public function font($url) {
+        $extension = getExtension($url);
+        $type = 'application/';
+        if($extension == 'woff')
+        {
+            $type .= 'font-woff';
+        }
+        else if($extension == 'otf' || $extension == 'ttf')
+        {
+            $type .= 'font-sfnt';
+        }
+        else if($extension == 'eot')
+        {
+            $type .= 'vnd.ms-fontobject';
+        }
+        else if($extension == 'svg')
+        {
+            $type .= 'image/svg+xml';
+        }
+
+        return $this->resource($url, $type);
+    }
+
+    public function getExtension($url)
+    {
+        return pathinfo($url, PATHINFO_EXTENSION);
+    }
+    /**
+     * Loads the file at the given URL, replaces all urls within it to cachebusted CDN urls,
+     * and returns the resulting css source code as a Response object suitable for the Laravel router.
+     * @param $url $type
+     */
+    public function resource($url, $type) {
         if (Session::isStarted() && Session::has('flash.old')) {
             Session::reflash(); // in case any flash data would have been lost here
         }
@@ -104,7 +169,7 @@ class AssetURLGenerator
                 $source,
                 200,
                 array(
-                    'Content-Type' => 'text/css',
+                    'Content-Type' => $type,
                 )
             );
 
