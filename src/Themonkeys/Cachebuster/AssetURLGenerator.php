@@ -61,6 +61,11 @@ class AssetURLGenerator
         }
     }
 
+    public function getExtension($url)
+    {
+        return pathinfo($url, PATHINFO_EXTENSION);
+    }
+
 
     public function css($url) {
         return $this->resource($url, 'text/css');
@@ -71,7 +76,7 @@ class AssetURLGenerator
     }
 
     public function img($url) {
-        $extension = getExtension($url);
+        $extension = $this->getExtension($url);
         $type = 'image/';
 
         if($extension == 'gif'   ||
@@ -100,7 +105,7 @@ class AssetURLGenerator
     }
 
     public function font($url) {
-        $extension = getExtension($url);
+        $extension = $this->getExtension($url);
         $type = 'application/';
         if($extension == 'woff')
         {
@@ -122,11 +127,7 @@ class AssetURLGenerator
         return $this->resource($url, $type);
     }
 
-    public function getExtension($url)
-    {
-        return pathinfo($url, PATHINFO_EXTENSION);
-    }
-    /**
+   /**
      * Loads the file at the given URL, replaces all urls within it to cachebusted CDN urls,
      * and returns the resulting css source code as a Response object suitable for the Laravel router.
      * @param $url $type
