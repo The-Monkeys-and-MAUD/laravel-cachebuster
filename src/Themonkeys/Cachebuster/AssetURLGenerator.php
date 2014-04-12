@@ -76,7 +76,7 @@ class AssetURLGenerator
         if (File::exists($url)) {
             $source = File::get($url);
             $base = realpath(dirname($url));
-            $public = realpath('./');
+            $public = realpath(DIRECTORY_SEPARATOR . public_path());
 
             // search for url('*') and replace with processed url
             $self = $this;
