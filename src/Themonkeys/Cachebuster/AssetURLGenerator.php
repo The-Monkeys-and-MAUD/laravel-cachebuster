@@ -31,14 +31,15 @@ class AssetURLGenerator
     }
 
     public function cachebusted($asset) {
-        $key = ltrim($asset, '/');
         $url = $asset;
 
-        $md5 = $this->md5($url);
-        if ($md5) {
-            $parts = pathinfo($url);
-            $dirname = ends_with($parts['dirname'], '/') ? $parts['dirname'] : $parts['dirname'] . '/';
-            $url = "{$dirname}{$parts['filename']}-$md5.{$parts['extension']}";
+        if (Config::get("cachebuster::enabled")) {
+            $md5 = $this->md5($url);
+            if ($md5) {
+                $parts = pathinfo($url);
+                $dirname = ends_with($parts['dirname'], '/') ? $parts['dirname'] : $parts['dirname'] . '/';
+                $url = "{$dirname}{$parts['filename']}-$md5.{$parts['extension']}";
+            }
         }
         return $url;
     }
@@ -47,7 +48,7 @@ class AssetURLGenerator
         $expiry = Config::get('cachebuster::expiry');
         $self = $this;
         $calculate = function() use($asset, $self) {
-            $path = $self->map_path($asset);
+            $path = public_path() . DIRECTORY_SEPARATOR . $self->map_path($asset);
             if (File::exists($path) && File::isFile($path)) {
                 return md5_file($path);
             } else {
@@ -73,32 +74,35 @@ class AssetURLGenerator
 
         // strip out cachebuster from the url, if necessary
         $url = $this->map_path($url);
-        if (File::exists($url)) {
-            $source = File::get($url);
-            $base = realpath(dirname($url));
-            $public = realpath('./');
+        $public = public_path();
+        $path = $public . DIRECTORY_SEPARATOR . $url;
+        if (File::exists($path)) {
+            $source = File::get($path);
+            $base = realpath(dirname($path));
 
             // search for url('*') and replace with processed url
             $self = $this;
-            $source = preg_replace_callback('/url\\((["\']?)([^\\)\'"\\?]+)((\\?[^\\)\'"]+)?[\'"]?)\\)/', function($matches) use($base, $public, $self) {
-                $url = $matches[2];
-                $qs = $matches[3];
+            if (Config::get("cachebuster::enabled")) {
+                $source = preg_replace_callback('/url\\((["\']?)([^\\)\'"\\?]+)((\\?[^\\)\'"]+)?[\'"]?)\\)/', function ($matches) use ($base, $public, $self) {
+                    $url = $matches[2];
+                    $qs = $matches[3];
 
-                // determine the absolute path of the given URL (resolve ../ etc against the path to the css file)
-                if (substr($url, 0, 1) != '/') {
-                    $abs = realpath($base . '/' . $url);
-                    if (File::exists($abs) && starts_with($abs, $public)) {
-                        $url = substr($abs, strlen($public));
+                    // determine the absolute path of the given URL (resolve ../ etc against the path to the css file)
+                    if (substr($url, 0, 1) != '/') {
+                        $abs = realpath($base . '/' . $url);
+                        if (File::exists($abs) && starts_with($abs, $public)) {
+                            $url = substr($abs, strlen($public));
+                        }
                     }
-                }
-                // if the url is absolute, we can process; otherwise, have to leave it alone
-                $replacement = $matches[0];
-                if (substr($url, 0, 1) == '/') {
-                    $replacement = 'url(' . $matches[1] . $self->url($url) . $matches[3] . ')';
-                }
-                return $replacement;
+                    // if the url is absolute, we can process; otherwise, have to leave it alone
+                    $replacement = $matches[0];
+                    if (substr($url, 0, 1) == '/') {
+                        $replacement = 'url(' . $matches[1] . $self->url($url) . $matches[3] . ')';
+                    }
+                    return $replacement;
 
-            }, $source);
+                }, $source);
+            }
 
             return Response::make(
                 $source,

@@ -40,4 +40,19 @@ return array(
     'path_maps' => array(
     ),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Enable or disable cachebusting functionality
+    |--------------------------------------------------------------------------
+    |
+    | You may want to disable cachebusting functionality in some environments,
+    | for example the testing environment if you use the built-in Laravel
+    | development web server which doesn't support the required URL rewriting.
+    |
+    | As an aside, if you still want cachebusting enabled in the development
+    | server then see https://gist.github.com/felthy/3fc1675a6a89db891396
+    |
+    */
+    'enabled' => true,
+
 );

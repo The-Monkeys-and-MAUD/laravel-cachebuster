@@ -154,6 +154,23 @@ Or you can just create a new file in that folder and only override the settings 
 The settings themselves are documented inside `config.php`.
 
 
+Using Laravel's built-in development server
+-------------------------------------------
+
+You may want to use Laravel's built-in development server to serve your application, for example for automated testing.
+Since that server doesn't support the necessary URL rewriting, the simplest solution is to disable cachebusting for that
+environment. Do that by creating the file `app/config/packages/themonkeys/cachebuster/testing/config.php` (replace
+`testing` with the environment used by the development server) with the contents:
+
+    <?php
+    return array(
+        'enabled' => false,
+    );
+
+If, instead, you still want to enable cachebusting under the development server, you can use the code in [this gist]
+(https://gist.github.com/felthy/3fc1675a6a89db891396). Thanks to [RTC1](https://github.com/RTC1) for the original code
+upon which that gist is based.
+
 Contribute
 ----------
 
