@@ -65,9 +65,9 @@ And add the following to your .htaccess file **after** the Laravel rewrite rule:
 Finally, add this to your `app/routes.php` file:
 
 ```php
-Route::get('/css/{filename}.css', function($filename) {
-    return Bust::css("/css/$filename.css");
-});
+Route::get('/css/{path}', function($filename) {
+    return Bust::css("/css/$filename");
+})->where('path', '.*');
 App::make('cachebuster.StripSessionCookiesFilter')->addPattern('|css/|');
 ```
 
