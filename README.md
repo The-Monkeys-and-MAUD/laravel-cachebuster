@@ -50,6 +50,9 @@ Add the following to your .htaccess file **before** the Laravel rewrite rule:
 </IfModule>
 ```
 
+> **Note:** If you're using NGINX and not interpreting `.htaccess` files, see 
+  [this gist](https://gist.github.com/RTC1/89d7f95555be8cf7d1aa) by @RTC1 for the equivalent NGINX rewrite rule.
+
 And add the following to your .htaccess file **after** the Laravel rewrite rule:
 
 ```ApacheConf
