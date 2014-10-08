@@ -68,26 +68,11 @@ And add the following to your .htaccess file **after** the Laravel rewrite rule:
 Finally, add this to your `app/routes.php` file:
 
 ```php
-Route::get('/css/{path}', function($filename) {
-    return Bust::css("/css/$filename");
-})->where('path', '.*');
-App::make('cachebuster.StripSessionCookiesFilter')->addPattern('|css/|');
+Route::get('{path}', function($filename) {
+  return Bust::css($filename);
+})->where('path', '.*\.css$');
+App::make('cachebuster.StripSessionCookiesFilter')->addPattern('|\.css$|');
 ```
-
-> **Note**: you might want to adjust the URL pattern if your css files are located elsewhere than `/css/`. If you have 
-  css files in all kinds of locations (for example, you might be using laravel packages that export css files to 
-  `/packages/`), then you could use a filter instead of a route, and match filenames ending in `.css`:
-  
-  ```php
-      App::before(function($request)
-      {
-          if ($request->is('*.css')) {
-              return Bust::css($request->path());
-          }
-      });
-      App::make('cachebuster.StripSessionCookiesFilter')->addPattern('|\.css$|');
-  ```
-
 
 Usage
 -----
