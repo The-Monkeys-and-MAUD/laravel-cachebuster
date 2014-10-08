@@ -74,7 +74,20 @@ Route::get('/css/{path}', function($filename) {
 App::make('cachebuster.StripSessionCookiesFilter')->addPattern('|css/|');
 ```
 
-> Note: you might want to adjust the URL pattern if your css files are located elsewhere than `/css/`.
+> **Note**: you might want to adjust the URL pattern if your css files are located elsewhere than `/css/`. If you have 
+  css files in all kinds of locations (for example, you might be using laravel packages that export css files to 
+  `/packages/`), then you could use a filter instead of a route, and match filenames ending in `.css`:
+  
+  ```php
+      App::before(function($request)
+      {
+          if ($request->is('*.css')) {
+              return Bust::css($request->path());
+          }
+      });
+      App::make('cachebuster.StripSessionCookiesFilter')->addPattern('|\.css$|');
+  ```
+
 
 Usage
 -----
