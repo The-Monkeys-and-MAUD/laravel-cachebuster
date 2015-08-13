@@ -10,8 +10,8 @@ are easy to transform too via a helper function in your blade templates.
 Also supports adding a CDN proxy prefix to your asset URLs, to quickly and easily add the performance and scalability
 of a transparent CDN such as [Cloudfront](http://aws.amazon.com/cloudfront/) to your app.
 
-Installation
-------------
+Installation Laravel 4.x
+-------------------------
 To get the latest version of cachebuster simply require it in your composer.json file by running:
 
 ```bash
