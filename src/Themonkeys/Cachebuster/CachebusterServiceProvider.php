@@ -19,11 +19,20 @@ class CachebusterServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-		$this->package('themonkeys/cachebuster');
+		//$this->package('themonkeys/cachebuster');
+		
         $rc = new \ReflectionClass($this->app);
         if ($rc->hasMethod('close')) {
             $this->app->close('cachebuster.StripSessionCookiesFilter');
         }
+
+        $configPath =  realpath(__DIR__ . '/../..');
+
+        $this->publishes([
+		    $configPath . "/config/config.php" => config_path('cachebuster.php'),
+		]);
+
+
 	}
 
 	/**

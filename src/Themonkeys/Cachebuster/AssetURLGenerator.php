@@ -23,7 +23,7 @@ class AssetURLGenerator
     public function url($asset, $absolute = false) {
         $url = $this->cachebusted($asset);
 
-        $base = Config::get("cachebuster::cdn");
+        $base = Config::get("cachebuster.cdn");
         if ($base === '' && $absolute) {
             $base = URL::to('/');
         }
@@ -33,19 +33,24 @@ class AssetURLGenerator
     public function cachebusted($asset) {
         $url = $asset;
 
-        if (Config::get("cachebuster::enabled")) {
+        if (Config::get("cachebuster.enabled")) {
             $md5 = $this->md5($url);
+
+        
             if ($md5) {
                 $parts = pathinfo($url);
                 $dirname = ends_with($parts['dirname'], '/') ? $parts['dirname'] : $parts['dirname'] . '/';
                 $url = "{$dirname}{$parts['filename']}-$md5.{$parts['extension']}";
             }
         }
+
         return $url;
     }
 
     public function md5($asset) {
-        $expiry = Config::get('cachebuster::expiry');
+
+
+        $expiry = Config::get('cachebuster.expiry');
         $self = $this;
         $calculate = function() use($asset, $self) {
             $path = public_path() . DIRECTORY_SEPARATOR . $self->map_path($asset);
@@ -82,7 +87,7 @@ class AssetURLGenerator
 
             // search for url('*') and replace with processed url
             $self = $this;
-            if (Config::get("cachebuster::enabled")) {
+            if (Config::get("cachebuster.enabled")) {
                 $source = preg_replace_callback('/url\\((["\']?)([^\\)\'"\\?]+)((\\?[^\\)\'"]+)?[\'"]?)\\)/', function ($matches) use ($base, $public, $self) {
                     $url = $matches[2];
                     $qs = $matches[3];
@@ -123,7 +128,7 @@ class AssetURLGenerator
 
     public function map_path($url) {
         $url = '/' . preg_replace(';(^/+|#.*$);', '', $this->strip_cachebuster($url));
-        foreach (Config::get('cachebuster::path_maps') as $from => $to) {
+        foreach (Config::get('cachebuster.path_maps') as $from => $to) {
             if (starts_with($url, $from)) {
                 $part = substr($url, strlen($from));
                 if (starts_with($part, '/')) {

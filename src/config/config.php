@@ -1,8 +1,8 @@
 <?php
 return array(
     /*
-	|--------------------------------------------------------------------------
-	| CDN base url.
+    |--------------------------------------------------------------------------
+    | CDN base url.
     | For local development, get resources from the same server as is hosting
     | the site itself by specifying "" here. To use a caching proxy like
     | cloudfront on other environments, create an environment-specific config
@@ -10,9 +10,13 @@ return array(
     | as "//abc0defgh1ij2.cloudfront.net" (omit the protocol so that http or
     | https will be selected automatically by the browser; and omit the
     | trailing slash because it's part of the asset URL that will be appended.)
-	|--------------------------------------------------------------------------
-	*/
-    "cdn" => '',
+
+    | NOTE: Set an environment specific dotEnv file where this can be overwritten,
+    | e.g. for Stage / Beta or Production. The default value is used below.
+    |--------------------------------------------------------------------------
+    */
+    "cdn" => env('CACHEBUSTER_CDN', ''),
+
 
     /*
     |--------------------------------------------------------------------------
@@ -23,8 +27,10 @@ return array(
     |
     | Specify 0 not to cache at all.
     |
+    | NOTE: Set an environment specific dotEnv file where this can be overwritten,
+    | e.g. for Stage / Beta or Production. The default value is used below.
     */
-    'expiry' => 0,
+    'expiry' => env('CACHEBUSTER_EXPIRY', 0),
 
     /*
     |--------------------------------------------------------------------------
@@ -36,9 +42,10 @@ return array(
     | Provide a hashmap of user-facing URL base paths to their corresponding
     | filesystem paths, for example '/assets' => 'path/to/assets',
     |
+    | NOTE: Set an environment specific dotEnv file where this can be overwritten,
+    | e.g. for Stage / Beta or Production. The default value is used below.
     */
-    'path_maps' => array(
-    ),
+    'path_maps' => env('CACHEBUSTER_PATH', array()),
 
     /*
     |--------------------------------------------------------------------------
@@ -52,7 +59,9 @@ return array(
     | As an aside, if you still want cachebusting enabled in the development
     | server then see https://gist.github.com/felthy/3fc1675a6a89db891396
     |
+    | NOTE: Set an environment specific dotEnv file where this can be overwritten,
+    | e.g. for Stage / Beta or Production. The default value is used below.
     */
-    'enabled' => true,
+    'enabled' => env('CACHEBUSTER_ENABLED', false),
 
 );
