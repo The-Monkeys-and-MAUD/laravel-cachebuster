@@ -11,16 +11,28 @@ are easy to transform too via a helper function in your blade templates.
 Also supports adding a CDN proxy prefix to your asset URLs, to quickly and easily add the performance and scalability
 of a transparent CDN such as [Cloudfront](http://aws.amazon.com/cloudfront/) to your app.
 
-Installation Laravel 4.x
--------------------------
-To get the latest version of cachebuster simply require it in your composer.json file by running:
+Installation
+------------
+To get the version of cachebuster compatible with your version of laravel, follow the notes below regarding installation
 
+1) Add the following to your **composer.json**
+
+#### For Laravel 5.x
 ```bash
-composer require themonkeys/cachebuster:dev-master --no-update
-composer update themonkeys/cachebuster
+"themonkeys/cachebuster" :"2.*"
 ```
 
-Once cachebuster is installed you need to register the service provider with the application.
+#### For Laravel 4.x
+```bash
+"themonkeys/cachebuster" :"1.*"
+```
+
+
+> **Note:** IFor continued Laravel 4 support, please use the cachebuster 1.x releases, and not dev-master*
+
+2) Run `composer update`
+
+3) Once cachebuster is installed you need to register the service provider with the application.
 Open up `app/config/app.php` and find the `providers` key.
 
 ```php
@@ -29,18 +41,16 @@ Open up `app/config/app.php` and find the `providers` key.
 )
 ```
 
-The package ships with a facade which provides a concise static syntax for encoding your URLs. You can register the
+4) The package ships with a facade which provides a concise static syntax for encoding your URLs. You can register the
 facade via the `aliases` key of your `app/config/app.php` file.
 
 ```php
 'aliases' => array(
-
     'Bust' => 'Themonkeys\Cachebuster\Cachebuster'
-
 )
 ```
 
-Add the following to your .htaccess file **before** the Laravel rewrite rule:
+5) Add the following to your .htaccess file **before** the Laravel rewrite rule:
 
 ```ApacheConf
 # ------------------------------------------------------------------------------
@@ -66,7 +76,7 @@ And add the following to your .htaccess file **after** the Laravel rewrite rule:
 </IfModule>
 ```
 
-Finally, add this to your `app/routes.php` file:
+6) Finally, add this to your `app/routes.php` file:
 
 ```php
 Route::get('{path}', function($filename) {
@@ -74,6 +84,55 @@ Route::get('{path}', function($filename) {
 })->where('path', '.*\.css$');
 App::make('cachebuster.StripSessionCookiesFilter')->addPattern('|\.css$|');
 ```
+
+Configuration
+-------------
+
+To configure the package, you can use the following command which wil publish the configuration file(s) to `app/config/`.
+
+#### Laravel 5.x
+```sh
+php artisan vendor:publish
+```
+Will publish to: `/app/config/cachebuster.php`. 
+
+The settings themselves are documented inside `/app/config/cachebuster.php`. You can change the default settings here too, for when the environment variables are not detected.
+
+> **Note:** Laravel 5.x [changed envronment configuration to use dotEnv files](http://laravel.com/docs/5.0/configuration#environment-configuration "Laravel 5"), and you will need to "enable" cachebuster using the dotEnv paradigm for each environment your application requires.
+
+For example, to enable cachebuster, open up your `.env` file, and add the following line 
+
+```bash
+CACHEBUSTER_ENABLED = true
+```
+
+
+#### Laravel 4.x
+```sh
+php artisan config:publish themonkeys/cachebuster
+```
+Will publish to: `app/config/packages/themonkeys/cachebuster`.
+
+Or you can just create a new file in that folder and only override the settings you need. The settings themselves are documented inside `app/config/packages/themonkeys/cachebuster/config.php`.
+
+
+Using Laravel's built-in development server
+-------------------------------------------
+
+You may want to use Laravel's built-in development server to serve your application, for example for automated testing.
+Since that server doesn't support the necessary URL rewriting, the simplest solution is to disable cachebusting for that
+environment. Do that by creating the file `app/config/packages/themonkeys/cachebuster/testing/config.php` (replace
+`testing` with the environment used by the development server) with the contents:
+
+    <?php
+    return array(
+        'enabled' => false,
+    );
+
+If, instead, you still want to enable cachebusting under the development server, you can use the code in [this gist]
+(https://gist.github.com/felthy/3fc1675a6a89db891396). Thanks to [RTC1](https://github.com/RTC1) for the original code
+upon which that gist is based.
+
 
 Usage
 -----
@@ -141,37 +200,6 @@ might come out as:
 This uses Laravel's built-in URL generators so the URLs will be generated depending on your environment.
 
 
-Configuration
--------------
-
-To configure the package, you can use the following command to copy the configuration file to
-`app/config/packages/themonkeys/cachebuster`.
-
-```sh
-php artisan config:publish themonkeys/cachebuster
-```
-
-Or you can just create a new file in that folder and only override the settings you need.
-
-The settings themselves are documented inside `config.php`.
-
-
-Using Laravel's built-in development server
--------------------------------------------
-
-You may want to use Laravel's built-in development server to serve your application, for example for automated testing.
-Since that server doesn't support the necessary URL rewriting, the simplest solution is to disable cachebusting for that
-environment. Do that by creating the file `app/config/packages/themonkeys/cachebuster/testing/config.php` (replace
-`testing` with the environment used by the development server) with the contents:
-
-    <?php
-    return array(
-        'enabled' => false,
-    );
-
-If, instead, you still want to enable cachebusting under the development server, you can use the code in [this gist]
-(https://gist.github.com/felthy/3fc1675a6a89db891396). Thanks to [RTC1](https://github.com/RTC1) for the original code
-upon which that gist is based.
 
 Contribute
 ----------
