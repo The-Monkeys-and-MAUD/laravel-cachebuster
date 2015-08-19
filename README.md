@@ -26,7 +26,9 @@ To get the version of cachebuster compatible with your version of laravel, follo
 ```bash
 "themonkeys/cachebuster" :"1.*"
 ```
-*Note: For continued Laravel 4 support, please use the cachebuster 1.x releases, and not dev-master*
+
+
+> **Note:** IFor continued Laravel 4 support, please use the cachebuster 1.x releases, and not dev-master*
 
 2) Run `composer update`
 
@@ -86,33 +88,33 @@ App::make('cachebuster.StripSessionCookiesFilter')->addPattern('|\.css$|');
 Configuration
 -------------
 
+To configure the package, you can use the following command which wil publish the configuration file(s) to `app/config/`.
+
 #### Laravel 5.x
-
-> Because Laravel 5.x [changed envronment configuration to use dotEnv files](http://laravel.com/docs/5.0/configuration#environment-configuration "Title"), you will need to "enable" cachebuster using the dotEnv paradigm for each environment you require.
-
-1) The following command will publish the required configuration file to **/app/config/cachebuster.php**. 
-
 ```sh
-php artisan vendor:publish themonkeys/cachebuster
+php artisan vendor:publish
 ```
+Will publish to: `/app/config/cachebuster.php`. 
 
-2) Open up your **.env** file, and add the following line 
+The settings themselves are documented inside `/app/config/cachebuster.php`. You can change the default settings here too, for when the environment variables are not detected.
 
-```
+> **Note:** Laravel 5.x [changed envronment configuration to use dotEnv files](http://laravel.com/docs/5.0/configuration#environment-configuration "Laravel 5"), and you will need to "enable" cachebuster using the dotEnv paradigm for each environment your application requires.
+
+For example, to enable cachebuster, open up your `.env` file, and add the following line 
+
+```bash
 CACHEBUSTER_ENABLED = true
 ```
 
-#### Laravel 4.x
-To configure the package, you can use the following command to copy the configuration file to
-`app/config/packages/themonkeys/cachebuster`.
 
+#### Laravel 4.x
 ```sh
 php artisan config:publish themonkeys/cachebuster
 ```
+Will publish to: `app/config/packages/themonkeys/cachebuster`.
 
-Or you can just create a new file in that folder and only override the settings you need.
+Or you can just create a new file in that folder and only override the settings you need. The settings themselves are documented inside `app/config/packages/themonkeys/cachebuster/config.php`.
 
-The settings themselves are documented inside `config.php`.
 
 Using Laravel's built-in development server
 -------------------------------------------
