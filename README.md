@@ -85,6 +85,17 @@ Route::get('{path}', function($filename) {
 App::make('cachebuster.StripSessionCookiesFilter')->addPattern('|\.css$|');
 ```
 
+> Note: this wildcard route is known to conflict with the wildcard route used by [croppa](https://github.com/BKWLD/croppa),
+> rendering Croppa ineffective. Should that affect you, simply be more specific with the CSS route. For example, if all 
+> your css files are in a `css/` folder:
+> 
+> ```
+> Route::get('/css/{path}', function($filename) {
+>     return Bust::css("/css/$filename");
+> })->where('path', '.*\.css$');
+> ```
+> Or you could even use `Bust::css()` within a filter instead.
+
 Configuration
 -------------
 
