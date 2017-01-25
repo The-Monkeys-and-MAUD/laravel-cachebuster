@@ -42,10 +42,10 @@ class CachebusterServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-        $this->app['cachebuster.url'] = $this->app->share(function($app) {
+		$this->app->singleton('cachebuster.url', function () {
             return new AssetURLGenerator();
         });
-        $this->app['cachebuster.StripSessionCookiesFilter'] = $this->app->share(function($app) {
+        $this->app->singleton('cachebuster.StripSessionCookiesFilter', function ($app) {
             return new StripSessionCookiesFilter($app);
         });
         $rc = new \ReflectionClass($this->app);
