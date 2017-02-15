@@ -67,12 +67,102 @@ class AssetURLGenerator
         }
     }
 
-    /**
-     * Loads the css file at the given URL, replaces all urls within it to cachebusted CDN urls,
-     * and returns the resulting css source code as a Response object suitable for the Laravel router.
+    /*
+     * Returns the extension of the file given
+     *
+     * @param $file
+     */
+    public function getExtension($file)
+    {
+        return pathinfo($file, PATHINFO_EXTENSION);
+    }
+
+    /*
+     * Returns a response with a css mime type in the header.
+     *
      * @param $url
      */
     public function css($url) {
+        return $this->resource($url, 'text/css');
+    }
+
+    /*
+     * Returns a response with the js mime type in the header.
+     *
+     * @param $url
+     */
+    public function js($url) {
+        return $this->resource($url, 'application/javascript');
+    }
+
+    /*
+     * Returns a response with a mime type based on the file type in the url
+     *
+     * @param $url
+     */
+    public function img($url) {
+        $extension = $this->getExtension($url);
+        $type = 'image/';
+
+        if($extension == 'gif'   ||
+            $extension == 'jpeg' ||
+            $extension == 'png'  ||
+            $extension == 'bmp'  ||
+            $extension == 'tiff'
+        )
+        {
+            $type .= $extension;
+        }
+        else if($extension == 'ico')
+        {
+            $type .= 'x-icon';
+        }
+        else if($extension == 'jpg')
+        {
+            $type .= 'jpeg';
+        }
+        else if($extension == 'tif')
+        {
+            $type .= 'tiff';
+        }
+
+        return $this->resource($url, $type);
+    }
+
+    /*
+     * Returns a response with a mime type based on the file type in the url
+     *
+     * @param $url
+     */
+    public function font($url) {
+        $extension = $this->getExtension($url);
+        $type = 'application/';
+        if($extension == 'woff')
+        {
+            $type .= 'font-woff';
+        }
+        else if($extension == 'otf' || $extension == 'ttf')
+        {
+            $type .= 'font-sfnt';
+        }
+        else if($extension == 'eot')
+        {
+            $type .= 'vnd.ms-fontobject';
+        }
+        else if($extension == 'svg')
+        {
+            $type .= 'image/svg+xml';
+        }
+
+        return $this->resource($url, $type);
+    }
+
+   /**
+     * Loads the file at the given URL, replaces all urls within it to cachebusted CDN urls,
+     * and returns the resulting css source code as a Response object suitable for the Laravel router.
+     * @param $url $type
+     */
+    public function resource($url, $type) {
         if (Session::isStarted() && Session::has('flash.old')) {
             Session::reflash(); // in case any flash data would have been lost here
         }
@@ -113,7 +203,7 @@ class AssetURLGenerator
                 $source,
                 200,
                 array(
-                    'Content-Type' => 'text/css',
+                    'Content-Type' => $type,
                 )
             );
 
