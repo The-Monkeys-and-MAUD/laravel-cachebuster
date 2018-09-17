@@ -17,17 +17,29 @@ class AssetURLGenerator
     /**
      * Returns a full URL to the given asset. For example, on production passing '/css/main.css' may return
      * http://a1bc23de4fgh5i.cloudfront.net/css/main-8b50d865ef2e3469be477e2745c888c5.css
+     * or
+     * http://a1bc23de4fgh5i.cloudfront.net/css/main.css?v=8b50d865ef2e3469be477e2745c888c5
      *
-     * @param $asset
+     * @param  string  $asset
+     * @param  boolean $absolute
+     * @param  boolean $useSubfix
+     *
+     * @return string
      */
-    public function url($asset, $absolute = false) {
-        $url = $this->cachebusted($asset);
-
+    public function url($asset, $absolute = false, $useSubfix = false) {
         $base = Config::get("cachebuster.cdn");
+
         if ($base === '' && $absolute) {
             $base = URL::to('/');
         }
-        return $base . $url;
+
+        if (Config::get("cachebuster.use_subfix") || $useSubfix) {
+            return "{$base}{$asset}?v={$this->md5($asset)}";
+        }
+
+        $url = $this->cachebusted($asset);
+
+        return "{$base}{$url}";
     }
 
     public function cachebusted($asset) {
@@ -36,7 +48,7 @@ class AssetURLGenerator
         if (Config::get("cachebuster.enabled")) {
             $md5 = $this->md5($url);
 
-        
+
             if ($md5) {
                 $parts = pathinfo($url);
                 $dirname = ends_with($parts['dirname'], '/') ? $parts['dirname'] : $parts['dirname'] . '/';

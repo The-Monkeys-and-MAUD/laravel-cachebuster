@@ -64,4 +64,16 @@ return array(
     */
     'enabled' => env('CACHEBUSTER_ENABLED', false),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Enable or disable cachebusting as subfix
+    |--------------------------------------------------------------------------
+    |
+    | A subfix with the file md5 is added instead of re-writing the assist
+    | filename
+    |
+    | Example:
+    | http://exmaple.com/js/main.js?v=40f29f23d7a1525411f3b9583d5d4ee6
+    */
+    'use_subfix' => env('CACHEBUSTER_USE_SUBFIX', false),
 );
